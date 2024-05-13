@@ -1,0 +1,2 @@
+// A script that count the documents in a mongodb collection
+db.school.count()
