@@ -25,17 +25,16 @@ def call_history(method: Callable) -> callable:
     """ wrapper function to the history method"""
 
     key = method.__qualname__
-    inp = "".join([key, ":inputs"])
-    outp = "".join([key, ":outputs"])
 
     @wraps(method)
     def history(self, *args, **kwargs):
         """ A method to save the input and outputs of a function"""
 
-        self._redis.rpush(inp, str(args))
-        data = method(self, *args, **kwargs)
-        self._redis.rpush(outp, str(data))
-        return data
+        inp = str(args)
+        self._redis.rpush(key + ":inputs", inp)
+        outp = str(method(self, *args, **kwargs))
+        self._redis.rpush(key + ":outputs", outp)
+        return outp
 
     return history
 
