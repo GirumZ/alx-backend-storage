@@ -1,9 +1,24 @@
 #!/usr/bin/env python3
 """ A python module for class defination of Cache"""
-import sys
+
+from functools import wraps
 import uuid
 import redis
 from typing import Union, Optional, Callable
+
+
+def count_calls(method: Callable) -> Callable:
+    """ A method to wrap the counter function"""
+
+    key = method.__qualname__
+
+    @wraps(method)
+    def counter(self, *args, **kwargs):
+        """ A method counter function"""
+
+        self._redis.incr(key)
+        return method(self, *args, **kwargs)
+    return counter
 
 
 class Cache:
@@ -14,6 +29,7 @@ class Cache:
         self._redis = redis.Redis()
         self._redis.flushdb()
 
+    @count_calls
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """ A method to generate a key and store data with the key"""
 
