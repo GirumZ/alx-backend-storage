@@ -21,7 +21,7 @@ def count_calls(method: Callable) -> Callable:
     return counter
 
 
-def call_history(method: Callable) -> callable:
+def call_history(method: Callable) -> Callable:
     """ wrapper function to the history method"""
 
     key = method.__qualname__
