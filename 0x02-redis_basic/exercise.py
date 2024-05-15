@@ -17,7 +17,7 @@ class Cache:
         """ A method to generate a key and store data with the key"""
 
         key = str(uuid.uuid4())
-        self._redis.set(key, data)
+        self._redis.mset({key: data})
         return key
 
 
