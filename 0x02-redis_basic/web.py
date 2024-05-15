@@ -25,9 +25,9 @@ def access_count(method: Callable) -> Callable:
         html_content = method(url)
 
         r.incr(key_count)
-        r.set(key, html_content, ex=10)
-        r.expire(key, 10)
+        r.setex(key, 10, html_content)
         return html_content
+
     return counter
 
 
