@@ -1,15 +1,15 @@
-#!/usr/bin/env/ python3
+#!/usr/bin/env python3
 """ A python module for the get_page function"""
 
 from functools import wraps
 import requests
 import redis
-
+from typing import Callable
 
 r = redis.Redis()
 
 
-def url_access_count(method):
+def access_count(method: Callable) -> Callable:
     """ A wrapper function for the counter function"""
 
     @wraps(method)
@@ -31,7 +31,7 @@ def url_access_count(method):
     return counter
 
 
-@url_access_count
+@access_count
 def get_page(url: str) -> str:
     """ requests a url"""
 
