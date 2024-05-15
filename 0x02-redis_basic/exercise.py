@@ -21,6 +21,25 @@ def count_calls(method: Callable) -> Callable:
     return counter
 
 
+def call_history(method: Callable) -> callable:
+    """ wrapper function to the history method"""
+
+    key = method.__qualname__
+    inp = "".join([key, ":inputs"])
+    outp = "".join([key, ":outputs"])
+
+    @wraps(method)
+    def history(self, *args, **kwargs):
+        """ A method to save the input and outputs of a function"""
+
+        self._redis.rpush(inp, str(args))
+        data = method(self, *args, **kwargs)
+        self._redis.rpush(outp, str(data))
+        return data
+
+    return history
+
+
 class Cache:
     """ Definition for the Cache class"""
 
@@ -30,6 +49,7 @@ class Cache:
         self._redis.flushdb()
 
     @count_calls
+    @call_history
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """ A method to generate a key and store data with the key"""
 
