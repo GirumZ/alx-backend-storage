@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """ A python module for class defination of Cache"""
+import sys
 import uuid
 import redis
-from typing import Union
+from typing import Union, Optional, Callable
 
 
 class Cache:
@@ -20,6 +21,20 @@ class Cache:
         self._redis.mset({key: data})
         return key
 
+    def get(self, key: str, fn: Optional[Callable] = None) \
+            -> Union[str, bytes, int, float]:
+        """ A method to convert the data back to desired format """
 
-if __name__ == "__main__":
-    main()
+        if fn:
+            return fn(self._redis.get(key))
+        data = self._redis.get(key)
+        return data
+
+    def get_int(self: bytes) -> int:
+        """ A method to change bytes to int"""
+        return int(self)
+
+    def get_str(self: bytes) -> str:
+        """ A method to change bytes to str"""
+
+        return self.decode("utf-8")
